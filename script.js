@@ -453,7 +453,11 @@ function normalizeColor(hexCode) {
         this.material = this.initMaterial(), this.geometry = new this.minigl.PlaneGeometry, this.mesh = new this.minigl.Mesh(this.geometry, this.material)
     }
     shouldSkipFrame(e) {
-        return !!window.document.hidden || (!this.conf.playing || (parseInt(e, 10) % 2 == 0 || void 0))
+        // If we assume a render callback @60fps we would render each second frame = @30 fps
+        // this is probably enough to get a smooth animation, even on big screens
+        let shouldSkip = this._skipFrame;
+        this._skipFrame = !shouldSkip;
+        return !!window.document.hidden || (!this.conf.playing || shouldSkip)
     }
     updateFrequency(e) {
         this.freqX += e, this.freqY += e
@@ -516,4 +520,4 @@ function normalizeColor(hexCode) {
   * Gradient.updateFrequency(freq)
   */
   var gradient = new Gradient();
-      gradient.initGradient("#gradient-canvas");
+  gradient.initGradient("#gradient-canvas");
